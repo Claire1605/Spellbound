@@ -6,6 +6,8 @@
 		_Colour1 ("Colour1", Color) = (1,0,0,1)
 		_Colour2 ("Colour2", Color) = (0,1,0,1)
 		_Colour3 ("Colour3", Color) = (0,0,1,1)
+		_Emission("Emission", Color) = (1,1,1,1)
+		_EmitStrength("Emissive Strength", Range(0,10)) = 0.0
 	}
 	SubShader
 	{
@@ -40,6 +42,8 @@
 			fixed4 _Colour1;
 			fixed4 _Colour2;
 			fixed4 _Colour3;
+			fixed4 _Emission;
+			float _EmitStrength;
 			
 			v2f vert (appdata v)
 			{
@@ -65,6 +69,9 @@
 
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, result);
+
+				result.rgb += _Emission * _EmitStrength;
+
 				return result;
 			}
 			ENDCG

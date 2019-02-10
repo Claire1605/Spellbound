@@ -1,0 +1,6 @@
+﻿TO-DO:
+
+After object is identified - don't allow identify spell, reset identify counter & symbols - animation (delay for now)
+Don't allow clicking on same object multiple times with identify spell
+Anchor spellbook canvas stuff properly
+Into text on start: "Explore the world"
