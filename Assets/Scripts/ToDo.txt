@@ -1,6 +1,20 @@
 ﻿TO-DO:
 
-After object is identified - don't allow identify spell, reset identify counter & symbols - animation (delay for now)
-Don't allow clicking on same object multiple times with identify spell
-Anchor spellbook canvas stuff properly
-Into text on start: "Explore the world"
+- if fail identify, animation: freeze, turn red, shrink
+
+Magic Font reference:
+tt = @
+ll = #
+ss = &
+uu = "
+hh = "
+mm = (
+dd = )
+oo = /
+ee = *
+gg = "
+aa = $
+kk = ...
+
+Stretch:
+- 3d orbs instead of UI sprites for wand spells

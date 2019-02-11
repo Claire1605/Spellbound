@@ -5,9 +5,14 @@ using UnityEngine.UI;
 
 public class Witch : MonoBehaviour {
 
+    public PlayerMovement movement;
+
+    [Header("Identify")]
+    public bool identifyEnabled = true;
     public int IDNumber = 0;
     public string IDName = "";
-    public PlayerMovement movement;
+    public List<GameObject> IDObjects = new List<GameObject>();
+    public Animator IDAnim;
 
     [Header("Spellbook")]
     public GameObject spellbook;
@@ -33,18 +38,62 @@ public class Witch : MonoBehaviour {
         }
     }
 
-    public void Identify(string name)
+    public void Identify(string name, GameObject obj)
     {
-        if (IDName == "" || name == IDName) //if null or the same, add number
+        //OBJECT ALREADY IN LIST
+        if (IDObjects.Contains(obj))
         {
-            IDNumber += 1;
-            foreach (var symbol in identifySymbols)
-            {
-                identifySymbols[IDNumber - 1].SetActive(true);
-            }
-            IDName = name;
+            StartCoroutine(lerpSize(identifySymbols[IDObjects.IndexOf(obj)].transform));
         }
-        else //if different, reset number
+        else if (!IDObjects.Contains(obj) && identifyEnabled && !PlayerSpellbook.namesFound.Contains(name))
+        {
+            //RE-ORDER & ADD TO OBJECT LIST
+           // if (IDObjects.Count == 3) 
+           // {
+           //     IDObjects[0] = IDObjects[1];
+           //     IDObjects[1] = IDObjects[2];
+           //     IDObjects[2] = obj;
+           // }
+            //else
+            //{
+                IDObjects.Add(obj);
+            //}
+
+            //CORRECT IDENTIFICATION, BEGIN/CONTINUE SPELL
+            if (IDName == "" || name == IDName) 
+            {
+                IDNumber += 1;
+                foreach (var symbol in identifySymbols)
+                {
+                    identifySymbols[IDNumber - 1].SetActive(true);
+                }
+                IDName = name;
+            }
+            //INCORRECT IDENTIFICATION, END SPELL
+            else 
+            {
+                IDNumber = 0;
+                IDName = "";
+                foreach (var symbol in identifySymbols)
+                {
+                    symbol.SetActive(false);
+                }
+                IDObjects.Clear();
+            }
+
+            //ADD TO SPELLBOOK WHEN FOUND 3
+            if (IDNumber == 3) 
+            {
+                IDAnim.SetBool("success", true);
+                identifyEnabled = false;
+                StartCoroutine(identifyAnim());
+                IDNumber = 0;
+                IDObjects.Clear();
+                PlayerSpellbook.AddName(name);
+            }
+        }
+        //INCORRECT IDENTIFICATION, END SPELL
+        else
         {
             IDNumber = 0;
             IDName = "";
@@ -52,17 +101,48 @@ public class Witch : MonoBehaviour {
             {
                 symbol.SetActive(false);
             }
+            IDObjects.Clear();
+        }
+    }
+
+    private IEnumerator identifyAnim()
+    {
+        //WAIT FOR SUCCESS ANIM TO BEGIN
+        while (!IDAnim.GetCurrentAnimatorStateInfo(0).IsName("identifySuccess")) 
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        IDAnim.SetBool("success", false);
+        //WAIT FOR IT TO END
+        while (IDAnim.GetCurrentAnimatorStateInfo(0).IsName("identifySuccess"))
+        {
+            yield return new WaitForEndOfFrame();
+        }
+        
+        foreach (var symbol in identifySymbols)
+        {
+            symbol.SetActive(false);
         }
 
-        if (IDNumber == 3)
+        //COOLDOWN
+        while (IDAnim.GetCurrentAnimatorStateInfo(0).IsName("identifyCooldown"))
         {
-            PlayerSpellbook.AddName(name);
-            IDNumber = 0;
-            //foreach (var symbol in identifySymbols)
-            //{
-            //    symbol.SetActive(false);
-            //}
+            yield return new WaitForEndOfFrame();
         }
+        identifyEnabled = true;
+    }
+
+    private IEnumerator lerpSize(Transform t)
+    {
+        float i = 0;
+        Vector3 initialScale = t.localScale;
+        while (i < 1)
+        {
+            i += Time.deltaTime;
+            t.localScale = initialScale * (1 + Mathf.Sin(i * Mathf.PI));
+            yield return new WaitForEndOfFrame();
+        }
+        t.localScale = initialScale;
     }
 
     public void OpenSpellbook()
@@ -76,7 +156,6 @@ public class Witch : MonoBehaviour {
         {
             spellList.text += name + "\r\n";
         }
-
     }
 
     public void CloseSpellbook()

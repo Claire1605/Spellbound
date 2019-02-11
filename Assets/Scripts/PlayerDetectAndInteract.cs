@@ -93,7 +93,7 @@ public class PlayerDetectAndInteract : MonoBehaviour {
                     cursorImage.sprite = cursorClick;
                     if (Input.GetKeyDown(KeyCode.Joystick1Button0) || Input.GetKeyDown(KeyCode.Return) || Input.GetKeyDown(KeyCode.Mouse0))
                     {
-                        witch.Identify(actualObject.trueName);
+                        witch.Identify(actualObject.trueName, actualObject.gameObject);
                         actualObject.Interact();
                     }
                 } 
