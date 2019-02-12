@@ -13,6 +13,7 @@ public class Witch : MonoBehaviour {
     public string IDName = "";
     public List<GameObject> IDObjects = new List<GameObject>();
     public Animator IDAnim;
+    private bool lerpSizeInProgress = false;
 
     [Header("Spellbook")]
     public GameObject spellbook;
@@ -38,26 +39,24 @@ public class Witch : MonoBehaviour {
         }
     }
 
+    public void setPositionToOrigin(Vector3 origin)
+    {
+        transform.position = origin;
+    }
+
     public void Identify(string name, GameObject obj)
     {
+        IDAnim.SetBool("success", false);
+        IDAnim.SetBool("failure", false);
+
         //OBJECT ALREADY IN LIST
-        if (IDObjects.Contains(obj))
+        if (IDObjects.Contains(obj) && !lerpSizeInProgress)
         {
             StartCoroutine(lerpSize(identifySymbols[IDObjects.IndexOf(obj)].transform));
         }
-        else if (!IDObjects.Contains(obj) && identifyEnabled && !PlayerSpellbook.namesFound.Contains(name))
+        else if (!IDObjects.Contains(obj) && identifyEnabled && !PlayerSpellbook.namesFound.Contains(name) && !lerpSizeInProgress)
         {
-            //RE-ORDER & ADD TO OBJECT LIST
-           // if (IDObjects.Count == 3) 
-           // {
-           //     IDObjects[0] = IDObjects[1];
-           //     IDObjects[1] = IDObjects[2];
-           //     IDObjects[2] = obj;
-           // }
-            //else
-            //{
-                IDObjects.Add(obj);
-            //}
+            IDObjects.Add(obj);
 
             //CORRECT IDENTIFICATION, BEGIN/CONTINUE SPELL
             if (IDName == "" || name == IDName) 
@@ -72,12 +71,15 @@ public class Witch : MonoBehaviour {
             //INCORRECT IDENTIFICATION, END SPELL
             else 
             {
+                IDAnim.SetBool("failure", true);
+                identifyEnabled = false;
+                StartCoroutine(identifyAnim("identifyFailure"));
                 IDNumber = 0;
                 IDName = "";
-                foreach (var symbol in identifySymbols)
-                {
-                    symbol.SetActive(false);
-                }
+                //foreach (var symbol in identifySymbols)
+                //{
+                //    symbol.SetActive(false);
+                //}
                 IDObjects.Clear();
             }
 
@@ -86,35 +88,39 @@ public class Witch : MonoBehaviour {
             {
                 IDAnim.SetBool("success", true);
                 identifyEnabled = false;
-                StartCoroutine(identifyAnim());
+                StartCoroutine(identifyAnim("identifySuccess"));
                 IDNumber = 0;
                 IDObjects.Clear();
                 PlayerSpellbook.AddName(name);
             }
         }
         //INCORRECT IDENTIFICATION, END SPELL
-        else
+        else if (!lerpSizeInProgress)
         {
+            IDAnim.SetBool("failure", true);
+            identifyEnabled = false;
+            StartCoroutine(identifyAnim("identifyFailure"));
             IDNumber = 0;
             IDName = "";
-            foreach (var symbol in identifySymbols)
-            {
-                symbol.SetActive(false);
-            }
+            //foreach (var symbol in identifySymbols)
+            //{
+            //    symbol.SetActive(false);
+            //}
             IDObjects.Clear();
         }
     }
 
-    private IEnumerator identifyAnim()
+    private IEnumerator identifyAnim(string animName)
     {
         //WAIT FOR SUCCESS ANIM TO BEGIN
-        while (!IDAnim.GetCurrentAnimatorStateInfo(0).IsName("identifySuccess")) 
+        while (!IDAnim.GetCurrentAnimatorStateInfo(0).IsName(animName)) 
         {
             yield return new WaitForEndOfFrame();
         }
         IDAnim.SetBool("success", false);
+        IDAnim.SetBool("failure", false);
         //WAIT FOR IT TO END
-        while (IDAnim.GetCurrentAnimatorStateInfo(0).IsName("identifySuccess"))
+        while (IDAnim.GetCurrentAnimatorStateInfo(0).IsName(animName))
         {
             yield return new WaitForEndOfFrame();
         }
@@ -134,6 +140,8 @@ public class Witch : MonoBehaviour {
 
     private IEnumerator lerpSize(Transform t)
     {
+        lerpSizeInProgress = true;
+       // identifyEnabled = false;
         float i = 0;
         Vector3 initialScale = t.localScale;
         while (i < 1)
@@ -143,6 +151,8 @@ public class Witch : MonoBehaviour {
             yield return new WaitForEndOfFrame();
         }
         t.localScale = initialScale;
+        lerpSizeInProgress = false;
+       // identifyEnabled = true;
     }
 
     public void OpenSpellbook()

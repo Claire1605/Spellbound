@@ -35,7 +35,7 @@ public class PlayerDetectAndInteract : MonoBehaviour {
 
         if (Physics.Raycast(CameraTransform.position, CameraTransform.forward, out rayHit, detectionDistance))
         {
-           Debug.Log(rayHit.collider.gameObject.name.ToString());
+          // Debug.Log(rayHit.collider.gameObject.name.ToString());
             intObj = rayHit.transform.GetComponent<InteractableObject>();
             if (intObj != null)
                 actualObject = intObj;
