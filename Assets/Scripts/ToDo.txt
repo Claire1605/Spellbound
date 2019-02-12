@@ -1,6 +1,10 @@
 ﻿TO-DO:
 
-- if fail identify, animation: freeze, turn red, shrink
+- generate walls
+- play around with colours, 'shapes' of colour
+- generate life based on biome formations
+- generate structures
+- generate secrets
 
 Magic Font reference:
 tt = @
