@@ -2,18 +2,19 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class GameSetup : MonoBehaviour {
 
     public GameObject introPanel;
-    public PlayerMovement movement;
+    public FirstPersonController fpc;
 
     void Start()
     {
         introPanel.gameObject.SetActive(true);
         Cursor.lockState = CursorLockMode.None;
         Cursor.visible = true;
-        movement.paused = true;
+        fpc.paused = true;
     }
 
     public void BeginButton()
@@ -38,6 +39,6 @@ public class GameSetup : MonoBehaviour {
         introPanel.gameObject.SetActive(false);
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
-        movement.paused = false;
+        fpc.paused = false;
     }
 }

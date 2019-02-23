@@ -1,6 +1,7 @@
 ﻿TO-DO:
 
-- generate walls
+- ensure outer walls are always raised
+- set wall randomisation
 - play around with colours, 'shapes' of colour
 - generate life based on biome formations
 - generate structures

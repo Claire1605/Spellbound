@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class PlayerDetectAndInteract : MonoBehaviour {
 
@@ -10,7 +11,7 @@ public class PlayerDetectAndInteract : MonoBehaviour {
     public float detectionAngle;
     public Transform CameraTransform;
    // public PauseMenu pauseMenu;
-    public PlayerMovement fpc;
+    public FirstPersonController fpc;
     public Text displayName;
     public Image cursorImage;
     public Sprite cursorDefault;

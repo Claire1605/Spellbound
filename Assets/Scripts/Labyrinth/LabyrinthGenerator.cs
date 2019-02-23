@@ -7,6 +7,9 @@ public class LabyrinthGenerator : MonoBehaviour {
     [Header("Hex")]
     public GameObject hexParent;
     public GameObject hexPrefab;
+    public GameObject hexWallPrefab;
+    public int wallHeightMin = 0;
+    public int wallHeightMax = 6;
     public Hex[,] hexArray;
     public int hexArraySize = 10;
     public float hexScale = 1.0f;
@@ -35,19 +38,32 @@ public class LabyrinthGenerator : MonoBehaviour {
 
     private Witch witch;
     private Vector3 origin = new Vector3(0, 0, 0);
+    private bool pathfindingDone = false;
 
     private void Awake()
     {
         //IF ANY HEX's FROM EDIT MODE
         foreach (var item in hexParent.GetComponentsInChildren<Hex>())
         {
-            Destroy(item.gameObject);
+            DestroyImmediate(item.gameObject);
         }
     }
     void Start () {
         witch = GameObject.FindGameObjectWithTag("Player").GetComponent<Witch>();
         GenerateLabyrinth(false);
         witch.setPositionToOrigin(origin);
+    }
+
+    private void Update()
+    {
+        if (!pathfindingDone)
+        {
+            foreach (var item in GameObject.FindGameObjectsWithTag("HexWallChecker"))
+            {
+                item.GetComponent<HexWallChecker>().removeDuplicateWall();
+            }
+            pathfindingDone = true;
+        }
     }
 
     public void GenerateLabyrinth(bool editMode)
@@ -104,6 +120,54 @@ public class LabyrinthGenerator : MonoBehaviour {
                 {
                     GameObject h = Instantiate(hexPrefab);
                     h.GetComponent<Hex>().Initialise(editMode, hexParent, hexArray[x, z].x, hexArray[x, z].z, x, z, hexScale, biomeList[Random.Range(0, biomeList.Count)]);
+                    GameObject w = Instantiate(hexWallPrefab);
+                    Vector3 scale = new Vector3(w.transform.localScale.x * hexScale, Random.Range(wallHeightMin, wallHeightMax), w.transform.localScale.z * hexScale);
+                    w.transform.localScale = scale;
+                    w.transform.parent = h.transform;
+                    w.transform.localPosition = Vector3.zero;
+
+                    //DEACTIVATE DUPLICATE WALLS
+                    List<int> edges = new List<int>();
+
+                    if (x == 0 && z == 0) // origin hex
+                    {
+                        edges.Clear();
+                    }
+                    else if (x == 0) // W edge
+                    {
+                        edges.Clear();
+                        edges.Add(3);
+                    }
+                    else if (z == 0) // SSW edge
+                    {
+                        edges.Clear();
+                        edges.Add(5);
+                    }
+                    else if (x < hexArraySize / 2 && z == limit - 1) // NNW edge
+                    {
+                        edges.Clear();
+                        edges.Add(3);
+                        edges.Add(4);
+                    }
+                    else if (x >= hexArraySize/2 && z == hexArraySize - limit) // SSE edge
+                    {
+                        edges.Clear();
+                        edges.Add(4);
+                        edges.Add(5);
+                    }
+                    else // all others
+                    {
+                        edges.Clear();
+                        edges.Add(3);
+                        edges.Add(4);
+                        edges.Add(5);
+                    }
+                    
+                    h.GetComponent<Hex>().DeactivateDuplicateWalls(edges);
+
+                    //RANDOMISE WALL LOWERING
+                    // to do - keep outer walls raised
+                    h.GetComponent<Hex>().RandomiseWalls();
                 }
             }
         }

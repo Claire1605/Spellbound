@@ -2,10 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityStandardAssets.Characters.FirstPerson;
 
 public class Witch : MonoBehaviour {
 
-    public PlayerMovement movement;
+    public FirstPersonController movement;
 
     [Header("Identify")]
     public bool identifyEnabled = true;
@@ -20,13 +21,9 @@ public class Witch : MonoBehaviour {
     public Text spellList;
     public List<GameObject> identifySymbols = new List<GameObject>();
 
-    void Start () {
-        movement = GameObject.FindGameObjectWithTag("Player").GetComponent<PlayerMovement>();
-    }
-
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Q))
         {
             if (!spellbook.activeSelf)
             {
