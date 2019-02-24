@@ -65,7 +65,7 @@ public class Hex : MonoBehaviour {
         }
     }
 
-    public void RandomiseWalls()
+    public void RandomiseWalls(List<int> edgeIndicesToIgnore)
     {
         tempWalls.Clear();
         wallCounter.Clear();
@@ -80,10 +80,13 @@ public class Hex : MonoBehaviour {
 
         for (int i = 0; i < tempWalls.Count; i++) // will be <6 if some children are deactivated
         {
-            wallCounter.Add(i);
+            if (!edgeIndicesToIgnore.Contains(i))
+            {
+                wallCounter.Add(i);
+            }   
         }
 
-        int wallLowerNumber = Random.Range(1, tempWalls.Count); //how many walls to lower
+        int wallLowerNumber = Random.Range(1, wallCounter.Count); //how many walls to lower
                                                     
         for (int i = 0; i < wallLowerNumber; i++)
         {
