@@ -7,6 +7,7 @@ TagManager:
   - HexWall
   - HexWallChecker
   - TEST
+  - HexColumn
   layers:
   - Default
   - TransparentFX
