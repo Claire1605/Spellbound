@@ -8,11 +8,12 @@ public class LabyrinthGenerator : MonoBehaviour {
     public GameObject hexParent;
     public GameObject hexPrefab;
     public GameObject hexWallPrefab;
+    public GameObject hexColumnPrefab;
     public int wallHeightMin = 0;
     public int wallHeightMax = 6;
     public Hex[,] hexArray;
     public int hexArraySize = 10;
-    public float hexScale = 1.0f;
+    public int hexScale = 1;
 
     private float hexVertRadius;
     private float hexEdgeRadius;
@@ -58,10 +59,6 @@ public class LabyrinthGenerator : MonoBehaviour {
     {
         if (!pathfindingDone)
         {
-            foreach (var item in GameObject.FindGameObjectsWithTag("HexWallChecker"))
-            {
-                item.GetComponent<HexWallChecker>().removeDuplicateWall();
-            }
             pathfindingDone = true;
         }
     }
@@ -121,21 +118,35 @@ public class LabyrinthGenerator : MonoBehaviour {
                     GameObject h = Instantiate(hexPrefab);
                     h.GetComponent<Hex>().Initialise(editMode, hexParent, hexArray[x, z].x, hexArray[x, z].z, x, z, hexScale, biomeList[Random.Range(0, biomeList.Count)]);
                     GameObject w = Instantiate(hexWallPrefab);
-                    Vector3 scale = new Vector3(w.transform.localScale.x * hexScale, Random.Range(wallHeightMin, wallHeightMax), w.transform.localScale.z * hexScale);
+                    GameObject c = Instantiate(hexColumnPrefab);
+                    h.GetComponent<Hex>().wallHeight = Random.Range(wallHeightMin, wallHeightMax);
+                    Vector3 scale = new Vector3(w.transform.localScale.x * hexScale, h.GetComponent<Hex>().wallHeight, w.transform.localScale.z * hexScale);
                     w.transform.localScale = scale;
                     w.transform.parent = h.transform;
                     w.transform.localPosition = Vector3.zero;
+                    foreach (var column in c.GetComponentsInChildren<Transform>())
+                    {
+                        if (column.gameObject.tag == "HexColumn")
+                        {
+                            column.transform.localScale = scale;
+                        }
+                    }
+                    c.transform.parent = h.transform;
+                    c.transform.localPosition = Vector3.zero;
 
                     //DEACTIVATE DUPLICATE WALLS
                     List<int> edgesToDeactivate = new List<int>();
+                    List<int> columnsToDeactivate = new List<int>();
                     List<int> edgesToKeepRaised = new List<int>();
 
                     edgesToDeactivate.Clear();
+                    columnsToDeactivate.Clear();
                     edgesToKeepRaised.Clear();
 
                     if (x == 0 && z == 0) // 0-0, West corner
                     {
-                        Debug.Log("West corner: " + x + "-" + z);
+                        columnsToDeactivate.Add(1);
+                        columnsToDeactivate.Add(2);
                         edgesToKeepRaised.Add(3);
                         edgesToKeepRaised.Add(4);
                         edgesToKeepRaised.Add(5);
@@ -143,110 +154,137 @@ public class LabyrinthGenerator : MonoBehaviour {
                     }
                     else if (x == 0 && z == limit - 1) // e.g 0-2, NNW corner
                     {
-                        Debug.Log("NNW corner: " + x + "-" + z);
                         edgesToDeactivate.Add(3);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(4);
                         edgesToKeepRaised.Add(0);
                         edgesToKeepRaised.Add(4);
                         edgesToKeepRaised.Add(5);
                     }
                     else if (x == (hexArraySize / 2) - 1 && z == limit - 1) // e.g 2-4, NNE corner
                     {
-                        Debug.Log("NNE corner: " + x + "-" + z);
                         edgesToDeactivate.Add(3);
                         edgesToDeactivate.Add(4);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(4);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(0);
                         edgesToKeepRaised.Add(1);
                         edgesToKeepRaised.Add(5);
                     }
                     else if (x == hexArraySize - 2 && z == x) // e.g 4-4, E corner
                     {
-                        Debug.Log("E corner: " + x + "-" + z);
                         edgesToDeactivate.Add(3);
                         edgesToDeactivate.Add(4);
                         edgesToDeactivate.Add(5);
+                        columnsToDeactivate.Add(4);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(0);
                         edgesToKeepRaised.Add(1);
                         edgesToKeepRaised.Add(2);
                     }
                     else if (x == hexArraySize - 2 && z == hexArraySize - limit) // e.g 4-2, SSE corner
                     {
-                        Debug.Log("SSE corner: " + x + "-" + z);
                         edgesToDeactivate.Add(0);
                         edgesToDeactivate.Add(4);
                         edgesToDeactivate.Add(5);
+                        columnsToDeactivate.Add(1);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(1);
                         edgesToKeepRaised.Add(2);
                         edgesToKeepRaised.Add(3);
                     }
                     else if (x == (hexArraySize / 2) - 1 && z == 0) // e.g 2-0, SSW corner
                     {
-                        Debug.Log("SSW corner: " + x + "-" + z);
                         edgesToDeactivate.Add(5);
+                        columnsToDeactivate.Add(1);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(2);
                         edgesToKeepRaised.Add(3);
                         edgesToKeepRaised.Add(4);
                     }
                     else if (z == 0) // SSW edge
                     {
-                        Debug.Log("SSW edge: " + x + "-" + z);
                         edgesToDeactivate.Add(5);
+                        columnsToDeactivate.Add(1);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(3);
                         edgesToKeepRaised.Add(4);
                     }
                     else if (x == 0) // W edge
                     {
-                        Debug.Log("W edge: " + x + "-" + z);
                         edgesToDeactivate.Add(3);
+                        columnsToDeactivate.Add(1);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(4);
                         edgesToKeepRaised.Add(4);
                         edgesToKeepRaised.Add(5);
                     }
                     else if (x < hexArraySize / 2 && z == limit - 1) // NNW edge
                     {
-                        Debug.Log("NNW edge: " + x + "-" + z);
                         edgesToDeactivate.Add(3);
                         edgesToDeactivate.Add(4);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(4);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(0);
                         edgesToKeepRaised.Add(5);
                     }
                     else if (x >= (hexArraySize / 2) - 1 && z == hexArraySize - 2) // NNE edge
                     {
-                        Debug.Log("NNE edge: " + x + "-" + z);
                         edgesToDeactivate.Add(3);
                         edgesToDeactivate.Add(4);
                         edgesToDeactivate.Add(5);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(4);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(0);
                         edgesToKeepRaised.Add(1);
                     }
                     else if (x >= hexArraySize - 2 && z >= hexArraySize / 2 - 1) // E edge
                     {
-                        Debug.Log("E edge: " + x + "-" + z);
                         edgesToDeactivate.Add(4);
                         edgesToDeactivate.Add(5);
+                        columnsToDeactivate.Add(1);
+                        columnsToDeactivate.Add(4);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(1);
                         edgesToKeepRaised.Add(2);
                     }
                     else if (x >= hexArraySize/2 && z == hexArraySize - limit) // SSE edge
                     {
-                        Debug.Log("SSE edge: " + x + "-" + z);
                         edgesToDeactivate.Add(4);
                         edgesToDeactivate.Add(5);
+                        columnsToDeactivate.Add(1);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(5);
                         edgesToKeepRaised.Add(2);
                         edgesToKeepRaised.Add(3);
                     }
                     else // all others
                     {
-                        Debug.Log("Others: " + x + "-" + z);
                         edgesToDeactivate.Add(3);
                         edgesToDeactivate.Add(4);
                         edgesToDeactivate.Add(5);
+                        columnsToDeactivate.Add(1);
+                        columnsToDeactivate.Add(2);
+                        columnsToDeactivate.Add(4);
+                        columnsToDeactivate.Add(5);
                     }
 
                     //RANDOMISE WALL LOWERING AND SET OUTER WALLS TO RAISED
                     h.GetComponent<Hex>().RandomiseWalls(edgesToKeepRaised);
-
-                    h.GetComponent<Hex>().DeactivateDuplicateWalls(edgesToDeactivate);
+                    h.GetComponent<Hex>().DeactivateDuplicateWalls(edgesToDeactivate, columnsToDeactivate);
+                    //h.GetComponent<Hex>().SetColumnHeights(x, z, hexScale);
                 }
             }
+        }
+
+        foreach (var hex in GameObject.Find("HexParent").gameObject.GetComponentsInChildren<Hex>())
+        {
+            hex.SetColumnHeights(hex.hex_X, hex.hex_Z, hexScale);
         }
         origin = new Vector3(hexArray[hexArraySize / 2 - 1, hexArraySize / 2 - 1].x, 0, hexArray[hexArraySize / 2 - 1, hexArraySize / 2 - 1].z);
     }
