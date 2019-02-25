@@ -47612,52 +47612,6 @@ MonoBehaviour:
   satMax: 0.7
   valMin: 0.25
   valMax: 0.88
---- !u!1001 &1905701264
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4940886938784264, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4940886938784264, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4940886938784264, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4940886938784264, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4940886938784264, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4940886938784264, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4940886938784264, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4940886938784264, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_RootOrder
-      value: 9
-      objectReference: {fileID: 0}
-    - target: {fileID: 1237809647384608, guid: c43183c198f0d2d48a489242510db324, type: 2}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_SourcePrefab: {fileID: 100100000, guid: c43183c198f0d2d48a489242510db324, type: 2}
-  m_IsPrefabAsset: 0
 --- !u!1 &1909543006
 GameObject:
   m_ObjectHideFlags: 0
@@ -48378,6 +48332,16 @@ Prefab:
       propertyPath: m_RootOrder
       value: 4
       objectReference: {fileID: 0}
+    - target: {fileID: 114587223013131482, guid: 146bb6113859c6c4c8089b21528e2dc6,
+        type: 2}
+      propertyPath: displayName
+      value: 
+      objectReference: {fileID: 2116432807}
+    - target: {fileID: 114587223013131482, guid: 146bb6113859c6c4c8089b21528e2dc6,
+        type: 2}
+      propertyPath: cursorImage
+      value: 
+      objectReference: {fileID: 1148466195}
     - target: {fileID: 114016812860260754, guid: 146bb6113859c6c4c8089b21528e2dc6,
         type: 2}
       propertyPath: IDAnim
@@ -48408,41 +48372,6 @@ Prefab:
       propertyPath: identifySymbols.Array.data[2]
       value: 
       objectReference: {fileID: 1148472052}
-    - target: {fileID: 114587223013131482, guid: 146bb6113859c6c4c8089b21528e2dc6,
-        type: 2}
-      propertyPath: displayName
-      value: 
-      objectReference: {fileID: 2116432807}
-    - target: {fileID: 114587223013131482, guid: 146bb6113859c6c4c8089b21528e2dc6,
-        type: 2}
-      propertyPath: cursorImage
-      value: 
-      objectReference: {fileID: 1148466195}
-    - target: {fileID: 20586559027171422, guid: 146bb6113859c6c4c8089b21528e2dc6,
-        type: 2}
-      propertyPath: m_BackGroundColor.r
-      value: 0.5931827
-      objectReference: {fileID: 0}
-    - target: {fileID: 20586559027171422, guid: 146bb6113859c6c4c8089b21528e2dc6,
-        type: 2}
-      propertyPath: m_BackGroundColor.g
-      value: 0.8113208
-      objectReference: {fileID: 0}
-    - target: {fileID: 20586559027171422, guid: 146bb6113859c6c4c8089b21528e2dc6,
-        type: 2}
-      propertyPath: m_BackGroundColor.b
-      value: 0.801972
-      objectReference: {fileID: 0}
-    - target: {fileID: 20586559027171422, guid: 146bb6113859c6c4c8089b21528e2dc6,
-        type: 2}
-      propertyPath: m_BackGroundColor.a
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 143972404393463840, guid: 146bb6113859c6c4c8089b21528e2dc6,
-        type: 2}
-      propertyPath: m_Height
-      value: 1.9
-      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 146bb6113859c6c4c8089b21528e2dc6, type: 2}
   m_IsPrefabAsset: 0
