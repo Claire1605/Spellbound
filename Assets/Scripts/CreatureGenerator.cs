@@ -4,7 +4,13 @@ using UnityEngine;
 
 public class CreatureGenerator : MonoBehaviour {
 
-    public int layerCount = 3;
+    public int layerCount = 2;
+    public int translationMin = 0;
+    public int translationMax = 6;
+    public float translationMultiplier = 2.0f;
+    public float scaleMin = 0.75f;
+    public float scaleMax = 1.0f;
+
     public GameObject[] shapePrefabs = new GameObject[6];
 
     //transformations
@@ -37,7 +43,7 @@ public class CreatureGenerator : MonoBehaviour {
         shapeMag = new float[layerCount];
         halfShapeMag = new float[layerCount];
         //shapeRadii = new float[layerCount];
-        colours = new Color[layerCount];
+        colours = new Color[3];
         shapeCountMag = new int[layerCount];
         matrixStack = new List<Matrix4x4>();
         matrixStack.Add(Matrix4x4.identity);
@@ -59,9 +65,9 @@ public class CreatureGenerator : MonoBehaviour {
         for (int i = 0; i < layerCount; i++)
         {
             //DEFINE TRANSFORMATIONS
-            layerTranslation[i] = Random.Range(0, 6) * 0.2f; //later - make these variables
+            layerTranslation[i] = Random.Range(translationMin, translationMax) * translationMultiplier; //later - x,y,z
             layerRotation[i] = Random.Range(0, 360);
-            layerScale[i] = Random.Range(0.75f, 1.0f); //later - make these variables
+            layerScale[i] = Random.Range(scaleMin, scaleMax); //later - x,y,z
 
             //DEFINE SHAPE SIZE MAGNTIUDES
             shapeMag[i] = Random.Range(maxScale / 4, maxScale);
@@ -92,8 +98,11 @@ public class CreatureGenerator : MonoBehaviour {
             matrixStack.Add(currentMatrix);
 
             newShape.transform.position = currentMatrix.MultiplyPoint(Vector3.zero);
+            Debug.Log(layerNumber + "." + shape + currentMatrix.MultiplyPoint(Vector3.zero));
             newShape.transform.rotation = currentMatrix.rotation;
+            Debug.Log(layerNumber + "." + shape + currentMatrix.rotation);
             newShape.transform.localScale = currentMatrix.lossyScale;
+            Debug.Log(layerNumber + "." + shape + currentMatrix.lossyScale);
 
             if (layerNumber + 1 < layerCount)
             {

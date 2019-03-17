@@ -24,6 +24,7 @@ public class LabyrinthGenerator : MonoBehaviour {
     public List<Biome> biomeList = new List<Biome>();
     public Shader biomeShader;
     public Texture2D biomeShaderTex;
+    public Texture2D biomeShaderDeformTex;
     [Range(0.0f,1.0f)]
     public float hueMin = 0.0f;
     [Range(0.0f, 1.0f)]
@@ -36,6 +37,14 @@ public class LabyrinthGenerator : MonoBehaviour {
     public float valMin = 0.0f;
     [Range(0.0f, 1.0f)]
     public float valMax = 1.0f;
+    [Range(-10.0f, 10.0f)]
+    public float deformHeightMin = 0.0f;
+    [Range(-10.0f, 10.0f)]
+    public float deformHeightMax = 1.0f;
+    [Range(0, 10.0f)]
+    public float deformZoomMin = 0.0f;
+    [Range(0, 10.0f)]
+    public float deformZoomMax = 1.0f;
 
     private Witch witch;
     private Vector3 origin = new Vector3(0, 0, 0);
@@ -52,7 +61,7 @@ public class LabyrinthGenerator : MonoBehaviour {
     void Start () {
         witch = GameObject.FindGameObjectWithTag("Player").GetComponent<Witch>();
         GenerateLabyrinth(false);
-        witch.setPositionToOrigin(origin);
+        witch.setPositionToOrigin(new Vector3(origin.x, witch.transform.position.y, origin.z));
     }
 
     private void Update()
@@ -76,12 +85,16 @@ public class LabyrinthGenerator : MonoBehaviour {
         for (int i = 0; i < biomeNumber; i++)
         {
             biomeList.Add(new Biome());
-            biomeList[i].Initialise(hueMin, hueMax, satMin, satMax, valMin, valMax);
+            biomeList[i].Initialise(hueMin, hueMax, satMin, satMax, valMin, valMax, deformHeightMin, deformHeightMax, deformZoomMin, deformZoomMax);
             biomeList[i].mat = new Material(biomeShader);
             biomeList[i].mat.SetColor("_Colour1", biomeList[i].colour1);
             biomeList[i].mat.SetColor("_Colour2", biomeList[i].colour2);
             biomeList[i].mat.SetColor("_Colour3", biomeList[i].colour3);
             biomeList[i].mat.SetTexture("_MainTex", biomeShaderTex);
+            biomeList[i].mat.SetTexture("_DeformTex", biomeShaderDeformTex);
+
+            biomeList[i].mat.SetFloat("_DeformHeight", biomeList[i].deformHeight);
+            biomeList[i].mat.SetFloat("_DeformZoom", biomeList[i].deformZoom);
         }
 
         //HEX
