@@ -1,0 +1,3 @@
+﻿Blender:
+Rotate around X -90
+On export settings, select mesh only, deselect button next to Scale 1.00, Apply Scale FBX All

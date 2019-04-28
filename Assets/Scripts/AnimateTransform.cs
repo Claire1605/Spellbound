@@ -40,6 +40,9 @@ public class AnimateTransform : MonoBehaviour
 
 	void Start ()
 	{
+        positionTime = 0.0f;
+        rotationTime = 0.0f;
+        scaleTime = 0.0f;
 		initialPosition = transform.localPosition;
 		initialRotation = transform.localEulerAngles;
 		initialScale = transform.localScale;
